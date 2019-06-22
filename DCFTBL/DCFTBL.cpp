@@ -7,9 +7,10 @@
 
 #include "DCFTBL.h"
 
-DCFTBL::DCFTBL(int DCF77Pin, int DCFMonitorPin,void (*logCallBack)(String)) {
+DCFTBL::DCFTBL(int DCF77Pin, int DCFMonitorPin, bool dcfSignalInverted, void (*logCallBack)(String)) {
 	dCF77Pin = DCF77Pin;
 	dCFMonitorPin = DCFMonitorPin;
+	dcfSignalIsInverted = dcfSignalInverted;
 	logger = logCallBack;
 	dCFInterrupt = digitalPinToInterrupt(DCF77Pin);
 	pinMode(dCF77Pin, INPUT);
@@ -30,6 +31,9 @@ dcfTime DCFTBL::getTime() {
 void DCFTBL::interruptHandler() {
 
 		byte sensorValue = digitalRead(dCF77Pin);
+		if (dcfSignalIsInverted) {
+			sensorValue = !sensorValue;
+		}
 		if (sensorValue) {
 			if (dCFMonitorPin>=0) {
 				digitalWrite(dCFMonitorPin, HIGH);
@@ -179,6 +183,7 @@ void DCFTBL::log(String msg) {
 // all the static init stuff
 int DCFTBL::dCF77Pin = 0;
 int DCFTBL::dCFMonitorPin=0;
+bool DCFTBL::dcfSignalIsInverted = false;
 dcfBit *DCFTBL::dcfInfoArray = new dcfBit[59];
 dcfBit  DCFTBL::lastDcfBit = {0,false};
 unsigned long DCFTBL::lastFallingTime = 0;

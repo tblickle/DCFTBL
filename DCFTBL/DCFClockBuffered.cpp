@@ -16,9 +16,9 @@ void decodeCallBack(dcfTime time) {
 	}
 }
 
-DCFClockBuffered::DCFClockBuffered(int DCF77Pin, int DCFMonitorPin,void (*logCallBack)(String)) {
+DCFClockBuffered::DCFClockBuffered(int DCF77Pin, int DCFMonitorPin, bool dcfSignalInverted, void (*logCallBack)(String)) {
 
-	dcf = new DCFTBL(DCF77Pin,DCFMonitorPin,logCallBack);
+	dcf = new DCFTBL(DCF77Pin,DCFMonitorPin,dcfSignalInverted,logCallBack);
 	clock = new Clock();
 	dcf->start(decodeCallBack);
 	quality = 0;

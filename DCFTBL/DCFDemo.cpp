@@ -9,10 +9,10 @@ void log(String s) {
   Serial.println(s);
 }
 
-TBL::DCFClockBuffered dc = TBL::DCFClockBuffered(DCFPIN,DCF_CTRL_LED);
+TBL::DCFClockBuffered dc = TBL::DCFClockBuffered(DCFPIN,DCF_CTRL_LED,true);
 
 //Use the line below instead, if you want to see debug output of DCF receiver
-//TBL::DCFClockBuffered dc = TBL::DCFClockBuffered(DCFPIN,DCF_CTRL_LED,log);
+//TBL::DCFClockBuffered dc = TBL::DCFClockBuffered(DCFPIN,DCF_CTRL_LED,true, log);
 
 
 void setup() {

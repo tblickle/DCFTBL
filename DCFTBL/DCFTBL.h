@@ -8,7 +8,7 @@
 #ifndef DCFTBL_H_
 #define DCFTBL_H_
 
-#define PULSEWIDTHTOLERANCE 15
+#define PULSEWIDTHTOLERANCE 20		// +/- 20ms tolerance to deteced 100ms / 200ms pulse
 #define SECONDWIDTHTOLERANCE 100
 #define MINUTEWIDTHTOLERANCE 20
 
@@ -31,15 +31,21 @@ typedef struct {
 class DCFTBL {
 
 public:
-	DCFTBL(int DCF77Pin, int DCFMonitorPin,void (*logCallBack)(String)=NULL);
-	//void start(void (*onTimeDecoded)(dcfTime time)=NULL);
+	DCFTBL(	int DCF77Pin,						//Arduino pin where DCF Receiver is attached
+			int DCFMonitorPin, 					//Monitor pin where LED is attached to show/flash in snyc with signal.
+												//Set to -1 if you don't want to use a monitor pin
+			bool dcfSignalInverted = false, 	//true, if "original" DCF signal is attached to <DCF77Pin>, false inverted signal is provided
+			void (*logCallBack)(String)=NULL	//callback function to log debug messages of DCF decoder (might be NULL if no logging required)
+			);
 	void start(void (*onTimeDecodedCallback)(dcfTime time) = NULL);
 	virtual ~DCFTBL();
-	dcfTime getTime(void);
+	dcfTime getTime(void);						//Last decoded time, please check dcfTime->signalQuality if result is valid.
+
 private:
 	int dCFInterrupt;
 	static int dCF77Pin;
 	static int dCFMonitorPin;
+	static bool dcfSignalIsInverted;
 	static dcfBit *dcfInfoArray;
 	static dcfBit lastDcfBit;
 	static unsigned long lastFallingTime;
