@@ -4,7 +4,10 @@ DCF 77 decoder including buffered clock for Arduino
 Easy-to-use DCF decoder that keeps track of current time (based on millis()) even if the signal is lost (for some time).
 See the following code example:
 ```
-#define DCFPIN 3		    // pin where DCF receiver is connected
+#include <Arduino.h>
+#include "DCFClockBuffered.h"
+
+#define DCFPIN 3        // pin where DCF receiver is connected
 #define DCF_CTRL_LED 5  // control pin (flashes in sync with DCF signal)
 
 TBL::DCFClockBuffered dcfClock = TBL::DCFClockBuffered(DCFPIN,DCF_CTRL_LED);
