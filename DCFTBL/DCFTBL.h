@@ -8,6 +8,8 @@
 #ifndef DCFTBL_H_
 #define DCFTBL_H_
 
+namespace TBL {
+
 #define PULSEWIDTHTOLERANCE 20		// +/- 20ms tolerance to deteced 100ms / 200ms pulse
 #define SECONDWIDTHTOLERANCE 100
 #define MINUTEWIDTHTOLERANCE 20
@@ -64,4 +66,5 @@ private:
 	static void (*onTimeDecoded)(dcfTime time);
 };
 
+} // Namespace TBL
 #endif /* DUMMY_H_ */

@@ -7,6 +7,8 @@
 
 #include "DCFTBL.h"
 
+namespace TBL {
+
 DCFTBL::DCFTBL(int DCF77Pin, int DCFMonitorPin, bool dcfSignalInverted, void (*logCallBack)(String)) {
 	dCF77Pin = DCF77Pin;
 	dCFMonitorPin = DCFMonitorPin;
@@ -192,3 +194,4 @@ unsigned long DCFTBL::lastGoodSecond = 0;
 void (*DCFTBL::logger)(String) = NULL;
 void (*DCFTBL::onTimeDecoded)(dcfTime time) = NULL;
 dcfTime DCFTBL::time = {0,0,0,0,0,0,0,0};
+}
