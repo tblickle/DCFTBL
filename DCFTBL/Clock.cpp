@@ -29,6 +29,20 @@ TBL::Time Clock::getTime() {
 	return startTime;
 }
 
+void Clock::syncMinute() {
+	int hour = startTime.getHour();
+	int minute = startTime.getMinute();
+	if (startTime.getSecond()<30) {
+		resetTime(Time(hour, minute,0));
+	} else {
+		minute++;
+		if (minute>=60) {
+			hour++;
+		}
+		resetTime(Time(hour, minute,0));
+	}
+}
+
 void Clock::recomputeTime() {
 	unsigned long deltaInMillis=millis() - startMillis; // will also work on millis() overflow
 	startMillis = millis();

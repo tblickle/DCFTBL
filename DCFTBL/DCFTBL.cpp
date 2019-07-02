@@ -140,8 +140,8 @@ void DCFTBL::decodeTime(void) {
 		if (year >= 0 ) {
 			time.year=year;
 		}
-		if (onTimeDecoded != NULL  && time.signalQuality > 90) {
-			// notify callback when good enough signal decoded
+		if (onTimeDecoded != NULL) {
+			// notify callback
 			onTimeDecoded(time);
 		}
 }

@@ -26,9 +26,14 @@ DCFClockBuffered::DCFClockBuffered(int DCF77Pin, int DCFMonitorPin, bool dcfSign
 }
 
 void DCFClockBuffered::onTimeDecodedCallback(dcfTime time) {
-	clock->resetTime(Time(time.hour, time.minute));
 	quality = time.signalQuality;
-	lastDecodedTime = time;
+	if (quality == 100) {
+		clock->resetTime(Time(time.hour, time.minute, 0));
+		lastDecodedTime = time;
+	} else {
+		clock->syncMinute();
+	}
+
 }
 
 Time DCFClockBuffered::getTime() {
