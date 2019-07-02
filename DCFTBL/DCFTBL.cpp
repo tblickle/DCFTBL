@@ -15,6 +15,9 @@ DCFTBL::DCFTBL(int DCF77Pin, int DCFMonitorPin, bool dcfSignalInverted, void (*l
 	dcfSignalIsInverted = dcfSignalInverted;
 	logger = logCallBack;
 	dCFInterrupt = digitalPinToInterrupt(DCF77Pin);
+	if (dCFInterrupt == NOT_AN_INTERRUPT) {
+		logger("Error: Pin "+String(dCF77Pin)+" does not support interrupts.");
+	}
 	pinMode(dCF77Pin, INPUT);
 	if (dCFMonitorPin>=0) {
 		pinMode(dCFMonitorPin,OUTPUT);
