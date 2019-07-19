@@ -79,12 +79,14 @@ void DCFTBL::interruptHandlerFalling() {
 	if (abs(2000-lamda)<MINUTEWIDTHTOLERANCE) {
 		// new Minute
 		log("Minute start detected. Lambda: "+String(lamda));
+		if (lastGoodMinute>0) {
+			decodeTime();
+		}
 		lastGoodMinute = interruptTime;
-		decodeTime();
 		clearData();
 	} else if (abs(1000-lamda)<SECONDWIDTHTOLERANCE) {
 		// good Second
-		unsigned long secondGuess = (interruptTime - lastGoodMinute +30 ) / 1000 -1;
+		unsigned long secondGuess = (interruptTime - lastGoodMinute +500 ) / 1000 -1;
 
 		if (secondGuess >=0 && secondGuess <59) {
 			dcfInfoArray[secondGuess]=lastDcfBit;
@@ -105,53 +107,49 @@ void DCFTBL::interruptHandlerFalling() {
 
 void DCFTBL::decodeTime(void) {
 	//Signal Quality
-		time.signalQuality=0;
-		for (int i = 0; i<=58; i++) {
-			if (dcfInfoArray[i].valid) {
-				time.signalQuality++;
-			}
+	time.signalQuality=0;
+	for (int i = 0; i<=58; i++) {
+		if (dcfInfoArray[i].valid) {
+			time.signalQuality++;
 		}
-		time.signalQuality = time.signalQuality*100 / 58;
+	}
+	time.signalQuality = time.signalQuality*100 / 58;
 
-		int min = decodeNumber(21,4) + 10 * decodeNumber(25,3);
-		if (min >= 0) {
-			// negative means decode error
-			time.minute = min;
-		}
 
-		int hr = decodeNumber(29,4) + 10 * decodeNumber(33,2);
-		if (hr>=0) {
-			time.hour = hr;
-		}
+	int min = decodeNumber(21,4) + 10 * decodeNumber(25,3);
+	time.minute = min; 		// negative means decode error
 
-		int dayOfWeek = decodeNumber(42,3);
-		if (dayOfWeek >= 0 ) {
-			time.dayOfWeek=dayOfWeek;
-		}
+	int hr = decodeNumber(29,4) + 10 * decodeNumber(33,2);
+	time.hour = hr; 		// negative means decode error
 
-		int day = decodeNumber(36,4) + 10* decodeNumber(40,2);
-		if (day >= 0 ) {
-			time.day=day;
-		}
+	int dayOfWeek = decodeNumber(42,3);
+	if (dayOfWeek >= 0 ) {
+		time.dayOfWeek=dayOfWeek;
+	}
 
-		int month = decodeNumber(45,4) + 10* decodeNumber(49,1);
-		if (month >= 0 ) {
-			time.month=month;
-		}
+	int day = decodeNumber(36,4) + 10* decodeNumber(40,2);
+	if (day >= 0 ) {
+		time.day=day;
+	}
 
-		int year = decodeNumber(50,4) + 10* decodeNumber(54,4);
-		if (year >= 0 ) {
-			time.year=year;
-		}
-		if (onTimeDecoded != NULL  && time.signalQuality > 90) {
-			// notify callback when good enough signal decoded
-			onTimeDecoded(time);
-		}
+	int month = decodeNumber(45,4) + 10* decodeNumber(49,1);
+	if (month >= 0 ) {
+		time.month=month;
+	}
+
+	int year = decodeNumber(50,4) + 10* decodeNumber(54,4);
+	if (year >= 0 ) {
+		time.year=year;
+	}
+	if (onTimeDecoded != NULL) {
+		// notify callback
+		onTimeDecoded(time);
+	}
 }
 
 int DCFTBL::decodeNumber(int startidx, int bits) {
 	boolean decodeok = true;
-	int val = -1;
+	int val = -1000; // be sure, value remains negative, even if
 
 	for (int i = startidx ; i<startidx+bits;i++) {
 		decodeok = decodeok && dcfInfoArray[i].valid;

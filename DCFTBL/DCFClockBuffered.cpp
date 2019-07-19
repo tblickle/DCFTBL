@@ -9,6 +9,7 @@
 
 namespace TBL {
 
+// Need this static stuff, because callback does not work on objects, only functions
 DCFClockBuffered* singleton = NULL;
 void decodeCallBack(dcfTime time) {
 	if (singleton != NULL) {
@@ -23,16 +24,27 @@ DCFClockBuffered::DCFClockBuffered(int DCF77Pin, int DCFMonitorPin, bool dcfSign
 	dcf->start(decodeCallBack);
 	quality = 0;
 	singleton = this;
+	logger = logCallBack;
 }
 
 void DCFClockBuffered::onTimeDecodedCallback(dcfTime time) {
-	clock->resetTime(Time(time.hour, time.minute));
-	quality = time.signalQuality;
-	lastDecodedTime = time;
+	// Called by DCFTBL when minute signal is detected on DCF
+	if (time.hour>=0 && time.minute>=0) {
+		//positive values mean valid decoding
+		setTime(Time(time.hour, time.minute, 0));
+		lastDecodedTime = time;
+		log("Decoded time: "+String(time.hour)+":"+String(time.minute));
+	} else {
+		clock->syncMinute();
+	}
 }
 
 Time DCFClockBuffered::getTime() {
 	return clock->getTime();
+}
+
+void DCFClockBuffered::setTime(Time currentTime) {
+	clock->setTime(currentTime);
 }
 
 int DCFClockBuffered::getQuality() {
@@ -41,6 +53,12 @@ int DCFClockBuffered::getQuality() {
 
 dcfTime DCFClockBuffered::getLastDecodedTime() {
 	return lastDecodedTime;
+}
+
+void DCFClockBuffered::log(String msg) {
+	if (logger != NULL) {
+		logger("DCF77ClockBuffered: "+msg);
+	}
 }
 
 } /* namespace TBL */

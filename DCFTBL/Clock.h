@@ -18,7 +18,8 @@ class Clock {
 public:
 	Clock(TBL::Time currentTime = Time());
 	TBL::Time getTime();
-	void resetTime(TBL::Time currentTime);
+	void setTime(TBL::Time currentTime);
+	void syncMinute(); // Resets seconds to 0 and rounding minutes
 
 private:
 	unsigned long startMillis;

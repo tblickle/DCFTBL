@@ -1,7 +1,7 @@
 /*
- * Dummy.h
+ * DCFTBL.h
  *
- *  Created on: 06.04.2019
+ * Created on: 06.04.2019
  *      Author: Tobias
  */
 #include <Arduino.h>
@@ -19,6 +19,11 @@ typedef struct  {
 		bool valid;
 		} dcfBit ;
 
+/*
+ * dcfTime struct to hold decoded information
+ * any value might be negative thus indicating that is could not be decoded successfully
+ * <signalQuality> (0 .. 100) indicates the quality of the signal (percent of undefined bits in the last minute)
+ */
 typedef struct {
 	 int second;
 	 int minute;
@@ -67,4 +72,4 @@ private:
 };
 
 } // Namespace TBL
-#endif /* DUMMY_H_ */
+#endif /* DCFTBL_H_ */

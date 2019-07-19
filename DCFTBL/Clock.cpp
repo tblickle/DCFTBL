@@ -14,11 +14,11 @@
 namespace TBL {
 
 Clock::Clock(TBL::Time currentTime) {
-	resetTime(currentTime);
+	setTime(currentTime);
 }
 
 
-void Clock::resetTime(TBL::Time currentTime) {
+void Clock::setTime(TBL::Time currentTime) {
 	startTime = currentTime;
 	startMillis = millis();
 }
@@ -27,6 +27,20 @@ void Clock::resetTime(TBL::Time currentTime) {
 TBL::Time Clock::getTime() {
 	recomputeTime();
 	return startTime;
+}
+
+void Clock::syncMinute() {
+	int hour = startTime.getHour();
+	int minute = startTime.getMinute();
+	if (startTime.getSecond()<30) {
+		setTime(Time(hour, minute,0));
+	} else {
+		minute++;
+		if (minute>=60) {
+			hour++;
+		}
+		setTime(Time(hour, minute,0));
+	}
 }
 
 void Clock::recomputeTime() {
