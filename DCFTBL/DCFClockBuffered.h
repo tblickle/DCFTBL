@@ -32,7 +32,6 @@ private:
 	DCFTBL* dcf;
 	Clock* clock;
 	dcfTime lastDecodedTime;
-	int quality;
 	void (*logger)(String s); //callback function for logging purpose
 	void log(String msg);
 };

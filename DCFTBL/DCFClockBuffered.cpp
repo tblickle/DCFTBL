@@ -22,7 +22,6 @@ DCFClockBuffered::DCFClockBuffered(int DCF77Pin, int DCFMonitorPin, bool dcfSign
 	dcf = new DCFTBL(DCF77Pin,DCFMonitorPin,dcfSignalInverted,logCallBack);
 	clock = new Clock();
 	dcf->start(decodeCallBack);
-	quality = 0;
 	singleton = this;
 	logger = logCallBack;
 }
@@ -48,7 +47,7 @@ void DCFClockBuffered::setTime(Time currentTime) {
 }
 
 int DCFClockBuffered::getQuality() {
-	return quality;
+	return dcf->getTime().signalQuality;
 }
 
 dcfTime DCFClockBuffered::getLastDecodedTime() {
