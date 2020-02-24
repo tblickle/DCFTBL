@@ -10,9 +10,9 @@
 
 namespace TBL {
 
-#define PULSEWIDTHTOLERANCE 20		// +/- 20ms tolerance to deteced 100ms / 200ms pulse
-#define SECONDWIDTHTOLERANCE 100
-#define MINUTEWIDTHTOLERANCE 20
+#define PULSEWIDTHTOLERANCE 30		// +/- 20ms tolerance to deteced 100ms / 200ms pulse
+#define SECONDWIDTHTOLERANCE 70
+#define MINUTEWIDTHTOLERANCE 100
 
 typedef struct  {
 		unsigned short value;
@@ -59,6 +59,7 @@ private:
 	static unsigned long lastGoodMinute;
 	static unsigned long lastGoodSecond;
 	static dcfTime time;
+	static long pulseWidth;
 
 	static void interruptHandler(void);
 	static void interruptHandlerRising(void);

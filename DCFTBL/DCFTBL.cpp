@@ -55,13 +55,13 @@ void DCFTBL::interruptHandler() {
 void DCFTBL::interruptHandlerRising() {
 	unsigned long interruptTime = millis();
 
-	long pulseWidth = interruptTime - lastFallingTime;
+	pulseWidth = interruptTime - lastFallingTime;
 
-	if (abs(200-pulseWidth)<PULSEWIDTHTOLERANCE) {
+	if (abs(188-pulseWidth)<PULSEWIDTHTOLERANCE) {
 		//good long pulse value = 1
 		lastDcfBit.value = 1;
 		lastDcfBit.valid = true;
-	} else if (abs(100-pulseWidth)<PULSEWIDTHTOLERANCE) {
+	} else if (abs(85-pulseWidth)<PULSEWIDTHTOLERANCE) {
 		//good short pulse value = 0
 		lastDcfBit.value = 0;
 		lastDcfBit.valid = true;
@@ -76,15 +76,16 @@ void DCFTBL::interruptHandlerRising() {
 void DCFTBL::interruptHandlerFalling() {
 	unsigned long interruptTime = millis();
 	long lamda = interruptTime - lastFallingTime;
-	if (abs(2000-lamda)<MINUTEWIDTHTOLERANCE) {
+	log("(Lambda, Width) = "+String(lamda)+","+String(pulseWidth));
+	if (abs(1950-lamda)<MINUTEWIDTHTOLERANCE) {
 		// new Minute
-		log("Minute start detected. Lambda: "+String(lamda));
+		log("--Minute start detected.");
 		if (lastGoodMinute>0) {
 			decodeTime();
 		}
 		lastGoodMinute = interruptTime;
 		clearData();
-	} else if (abs(1000-lamda)<SECONDWIDTHTOLERANCE) {
+	} else if (abs(980-lamda)<SECONDWIDTHTOLERANCE) {
 		// good Second
 		unsigned long secondGuess = (interruptTime - lastGoodMinute +500 ) / 1000 -1;
 
@@ -93,14 +94,14 @@ void DCFTBL::interruptHandlerFalling() {
 		}
 
 		if  (lastDcfBit.valid) {
-			log("Good second.    Guess="+String(secondGuess)+ " Value="+String(lastDcfBit.value)+" Lambda: "+String(lamda));
+			log("--Good second.    Guess="+String(secondGuess)+ " Value="+String(lastDcfBit.value));
 		} else {
-			log("Invalid second. Guess="+String(secondGuess)+ " PW   ="+String(lastDcfBit.value)+" Lambda: "+String(lamda));
+			log("--Invalid second. Guess="+String(secondGuess));
 		}
 
 	} else {
 		// noise, something else...
-		log("Noise. Lambda: "+String(lamda));
+		log("--Noise");
 	}
 	lastFallingTime=interruptTime;
 }
@@ -114,13 +115,16 @@ void DCFTBL::decodeTime(void) {
 		}
 	}
 	time.signalQuality = time.signalQuality*100 / 58;
+	log("--Signalquality = " + String(time.signalQuality));
 
 
 	int min = decodeNumber(21,4) + 10 * decodeNumber(25,3);
 	time.minute = min; 		// negative means decode error
+	log("--Minutes       = " + String(min));
 
 	int hr = decodeNumber(29,4) + 10 * decodeNumber(33,2);
 	time.hour = hr; 		// negative means decode error
+	log("--Hour          = " + String(hr));
 
 	int dayOfWeek = decodeNumber(42,3);
 	if (dayOfWeek >= 0 ) {
@@ -195,4 +199,5 @@ unsigned long DCFTBL::lastGoodSecond = 0;
 void (*DCFTBL::logger)(String) = NULL;
 void (*DCFTBL::onTimeDecoded)(dcfTime time) = NULL;
 dcfTime DCFTBL::time = {0,0,0,0,0,0,0,0};
+long DCFTBL::pulseWidth=0;
 }
