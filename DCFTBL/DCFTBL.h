@@ -1,7 +1,7 @@
 /*
- * Dummy.h
+ * DCFTBL.h
  *
- *  Created on: 06.04.2019
+ * Created on: 06.04.2019
  *      Author: Tobias
  */
 #include <Arduino.h>
@@ -10,15 +10,20 @@
 
 namespace TBL {
 
-#define PULSEWIDTHTOLERANCE 20		// +/- 20ms tolerance to deteced 100ms / 200ms pulse
-#define SECONDWIDTHTOLERANCE 100
-#define MINUTEWIDTHTOLERANCE 20
+#define PULSEWIDTHTOLERANCE 30		// +/- 20ms tolerance to deteced 100ms / 200ms pulse
+#define SECONDWIDTHTOLERANCE 70
+#define MINUTEWIDTHTOLERANCE 100
 
 typedef struct  {
 		unsigned short value;
 		bool valid;
 		} dcfBit ;
 
+/*
+ * dcfTime struct to hold decoded information
+ * any value might be negative thus indicating that is could not be decoded successfully
+ * <signalQuality> (0 .. 100) indicates the quality of the signal (percent of undefined bits in the last minute)
+ */
 typedef struct {
 	 int second;
 	 int minute;
@@ -54,6 +59,7 @@ private:
 	static unsigned long lastGoodMinute;
 	static unsigned long lastGoodSecond;
 	static dcfTime time;
+	static long pulseWidth;
 
 	static void interruptHandler(void);
 	static void interruptHandlerRising(void);
@@ -67,4 +73,4 @@ private:
 };
 
 } // Namespace TBL
-#endif /* DUMMY_H_ */
+#endif /* DCFTBL_H_ */

@@ -23,6 +23,7 @@ public:
 	DCFClockBuffered(int DCF77Pin, int DCFMonitorPin, bool dcfSignalInverted=false, void (*logCallBack)(String)=NULL);
 
 	Time getTime(); // returns current most accurate time
+	void setTime(Time currentTime);
 	int getQuality(); // returns quality of last decoded signal (0-100). Indication of quality of receiver
 	dcfTime getLastDecodedTime(); // return the last successfully decoded signal (as <dcfTime>). Might be quiet different from <getTime()>
 	void onTimeDecodedCallback(dcfTime time); // internal callback, not API
@@ -31,7 +32,8 @@ private:
 	DCFTBL* dcf;
 	Clock* clock;
 	dcfTime lastDecodedTime;
-	int quality;
+	void (*logger)(String s); //callback function for logging purpose
+	void log(String msg);
 };
 
 } /* namespace TBL */
